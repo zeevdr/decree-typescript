@@ -313,8 +313,12 @@ describe("ConfigClient", () => {
 	});
 
 	describe("watch()", () => {
-		it("throws not implemented error", () => {
-			expect(() => client.watch("tenant-1")).toThrow("not yet implemented");
+		it("returns a ConfigWatcher instance", () => {
+			const watcher = client.watch("tenant-1");
+			expect(watcher).toBeDefined();
+			expect(typeof watcher.field).toBe("function");
+			expect(typeof watcher.start).toBe("function");
+			expect(typeof watcher.stop).toBe("function");
 		});
 	});
 

@@ -28,6 +28,7 @@ import {
 } from "./generated/centralconfig/v1/version_service.js";
 import { withRetry } from "./retry.js";
 import type { ClientOptions, RetryConfig, ServerVersion } from "./types.js";
+import { ConfigWatcher } from "./watcher.js";
 
 /**
  * Options for get() with nullable support.
@@ -257,10 +258,25 @@ export class ConfigClient {
 	}
 
 	/**
-	 * Create a config watcher for a tenant (Phase 3 placeholder).
+	 * Create a config watcher for a tenant.
+	 *
+	 * Returns a ConfigWatcher that can register fields and subscribe to
+	 * live configuration changes. Call `field()` to register fields, then
+	 * `start()` to load the initial snapshot and begin streaming.
+	 *
+	 * @param tenantId - The tenant ID to watch.
+	 * @returns A new ConfigWatcher instance.
+	 *
+	 * @example
+	 * ```ts
+	 * const watcher = client.watch('tenant-id');
+	 * const fee = watcher.field('payments.fee', Number, { default: 0.01 });
+	 * await watcher.start();
+	 * console.log(fee.value);
+	 * ```
 	 */
-	watch(_tenantId: string): never {
-		throw new Error("ConfigWatcher is not yet implemented (Phase 3)");
+	watch(tenantId: string): ConfigWatcher {
+		return new ConfigWatcher(this.configStub, this.metadata, this.timeout, tenantId);
 	}
 
 	/**

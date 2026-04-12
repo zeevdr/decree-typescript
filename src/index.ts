@@ -29,6 +29,9 @@ export {
 // Client
 export { ConfigClient } from "./client.js";
 
+// Watcher
+export { ConfigWatcher, WatchedField } from "./watcher.js";
+
 // Utilities (re-export for advanced users)
 export { withRetry } from "./retry.js";
 export { createChannel } from "./channel.js";
