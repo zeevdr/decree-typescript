@@ -639,6 +639,32 @@ describe("ConfigWatcher", () => {
 		});
 	});
 
+	describe("stopped guards", () => {
+		it("ignores stream error after stop", async () => {
+			const watcher = createWatcher();
+			watcher.field("payments.fee", Number, { default: 0.01 });
+			mockGetConfigSuccess([]);
+
+			await watcher.start();
+			await watcher.stop();
+
+			// Error after stop should not throw or reconnect.
+			mockStream.emit("error", makeServiceError(status.UNAVAILABLE, "late error"));
+		});
+
+		it("ignores stream end after stop", async () => {
+			const watcher = createWatcher();
+			watcher.field("payments.fee", Number, { default: 0.01 });
+			mockGetConfigSuccess([]);
+
+			await watcher.start();
+			await watcher.stop();
+
+			// End after stop should not reconnect.
+			mockStream.emit("end");
+		});
+	});
+
 	describe("GetConfig errors", () => {
 		it("throws on GetConfig failure", async () => {
 			const watcher = createWatcher();

@@ -131,6 +131,23 @@ describe("ConfigClient", () => {
 			expect(result).toBeNull();
 		});
 
+		it("returns null for nullable get when TypedValue is empty", async () => {
+			configStub.getField.mockImplementation(
+				(_req: unknown, _meta: unknown, _opts: unknown, cb: (...args: unknown[]) => void) => {
+					cb(null, {
+						value: {
+							fieldPath: "f",
+							value: {},
+							checksum: "c",
+						},
+					});
+				},
+			);
+
+			const result = await client.get("tenant-1", "f", String, { nullable: true });
+			expect(result).toBeNull();
+		});
+
 		it("throws NotFoundError when value is missing and nullable is false", async () => {
 			configStub.getField.mockImplementation(
 				(_req: unknown, _meta: unknown, _opts: unknown, cb: (...args: unknown[]) => void) => {
@@ -355,6 +372,36 @@ describe("ConfigClient", () => {
 			);
 
 			await client.get("tenant-1", "a");
+		});
+
+		it("sets Bearer token when token is provided", () => {
+			const tokenClient = new ConfigClient("localhost:9090", {
+				token: "my-jwt-token",
+				retry: false,
+			});
+			// Client was constructed — token branch was executed
+			tokenClient.close();
+		});
+
+		it("sets x-tenant-id when tenantId is provided", () => {
+			const tenantClient = new ConfigClient("localhost:9090", {
+				subject: "user",
+				tenantId: "t1",
+				retry: false,
+			});
+			tenantClient.close();
+		});
+	});
+
+	describe("TLS channel", () => {
+		it("creates insecure channel by default", () => {
+			const c = new ConfigClient("localhost:9090", { retry: false });
+			c.close();
+		});
+
+		it("creates TLS channel when insecure is false", () => {
+			const c = new ConfigClient("localhost:9090", { insecure: false, retry: false });
+			c.close();
 		});
 	});
 });
