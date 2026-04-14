@@ -1,3 +1,7 @@
+> **This project has moved to [opendecree/decree-typescript](https://github.com/opendecree/decree-typescript).** This repository is archived and read-only.
+
+---
+
 # OpenDecree TypeScript SDK
 
 [![CI](https://github.com/zeevdr/decree-typescript/actions/workflows/ci.yml/badge.svg)](https://github.com/zeevdr/decree-typescript/actions/workflows/ci.yml)
